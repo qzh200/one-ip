@@ -1,0 +1,24 @@
+site:
+  title: IP 网络工具
+  home_url: https://hoshiumi.xyz/
+  theme:
+    default: system
+    allow_switch: true
+
+theme:
+  background: '#f4f6fe'
+  primary: '#7f9df2'
+  secondary: '#f0a9cc'
+  accent: '#9d92ec'
+
+dark:
+  background: '#0e1230'
+  primary: '#9ab2ff'
+  secondary: '#ffb8d6'
+  accent: '#b6acff'
+
+card:
+  radius: 22px
+  blur: 20px
+  border_opacity: 0.35
+  bg_opacity: 0.6

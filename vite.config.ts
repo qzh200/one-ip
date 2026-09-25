@@ -1,5 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { spawn } from "node:child_process";
 import { rm } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath, URL } from "node:url";
@@ -39,6 +40,32 @@ export default defineConfig(() => {
 
   return {
     plugins: [
+      {
+        name: "one-ip-config-watcher",
+        buildStart() {
+          // predev already runs the script; this is a fallback (e.g. when
+          // someone runs `vite` directly without pnpm/npm lifecycle hooks)
+          try {
+            spawn(process.execPath, ["scripts/build-theme.mjs"], {
+              stdio: "inherit",
+              cwd: process.cwd(),
+            });
+          } catch (e) {
+            console.error("[vite] build-theme failed", e);
+          }
+        },
+        watchChange(id) {
+          if (
+            id.endsWith("config/site.yaml") ||
+            id.endsWith("config\\site.yaml")
+          ) {
+            spawn(process.execPath, ["scripts/build-theme.mjs"], {
+              stdio: "inherit",
+              cwd: process.cwd(),
+            });
+          }
+        },
+      },
       react(),
       tailwindcss(),
       excludeBackendSource(),

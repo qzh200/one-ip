@@ -204,23 +204,12 @@ export default function StatusPage() {
         description={t("各服务运行状态与故障事件，第三方来源单独标注")}
       />
       <div className="toolbar">
-        <div className="filter-tabs">
-          {["全部", "AI", "VPS", "云服务", "开发", "社区"].map((group) => (
-            <Button
-              size="sm"
-              variant={group === filter ? "secondary" : "ghost"}
-              key={t(group)}
-              onClick={() => setParams(group === "全部" ? {} : { group })}
-            >
-              {t(group)}
-            </Button>
-          ))}
-        </div>
         <Button
           variant="outline"
           size="sm"
           disabled={pending}
           aria-busy={pending}
+          className="ml-auto"
           onClick={() => {
             void Promise.all(
               queries

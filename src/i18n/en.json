@@ -66,8 +66,7 @@
   "刷新页面": "Refresh page",
   "正在刷新…": "Refreshing…",
   "<div class=\"bar\" role=\"progressbar\" aria-label=\"页面切换\"><div class=\"peg\"></div></div>": "<div class=\"bar\" role=\"progressbar\" aria-label=\"Page navigation\"><div class=\"peg\"></div></div>",
-  "切换为浅色模式": "Switch to light mode",
-  "切换为深色模式": "Switch to dark mode",
+  "切换主题（浅色 / 深色 / 跟随系统）": "Toggle theme (Light / Dark / System)",
   "浅色模式": "Light mode",
   "深色模式": "Dark mode",
   "跟随系统": "System",
@@ -118,7 +117,7 @@
   "WebRTC 检测": "WebRTC check",
   "WHOIS 查询": "WHOIS lookup",
   "站点通知": "Site notifications",
-  "概览": "Overview",
+  "首页": "Home",
   "网络检测": "Network checks",
   "网络": "Network",
   "浏览器检测": "Browser checks",
@@ -1709,5 +1708,9 @@
   "分享当前页面": "Share this page",
   "扫码或复制链接，打开当前页面。": "Scan or copy the link to open this page.",
   "扫码打开当前页面": "Scan to open this page",
-  "当前页面链接": "Current page link"
+  "当前页面链接": "Current page link",
+  "返回 Hoshiumi 主页": "Back to Hoshiumi Home",
+  "breadcrumb": "Breadcrumb",
+  "工具列表": "Tools",
+  "导航": "Navigate"
 }

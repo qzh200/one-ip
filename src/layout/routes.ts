@@ -2,7 +2,7 @@ import { t } from "@/i18n";
 import { aiPlatforms } from "@/views/ai/platforms";
 
 export const navigationRoutes = [
-  { value: "/", label: t("概览"), short: t("概览") },
+  { value: "/", label: t("首页"), short: t("首页") },
   { value: "/ai/", label: t("AI 检测"), short: "AI" },
   { value: "/status/", label: t("服务状态"), short: t("状态") },
   { value: "/network/", label: t("网络检测"), short: t("网络") },
@@ -30,6 +30,14 @@ export const toolGroups = {
     path: `/ai/${platform.id}`,
     label: platform.name,
   })),
+  status: [
+    { path: "/status", label: t("全部") },
+    { path: "/status?group=AI", label: "AI" },
+    { path: "/status?group=VPS", label: "VPS" },
+    { path: "/status?group=云服务", label: t("云服务") },
+    { path: "/status?group=开发", label: t("开发") },
+    { path: "/status?group=社区", label: t("社区") },
+  ],
 } as const;
 export const legacyRoutes: Record<string, string> = {
   "/query": "/network/ip",
@@ -73,6 +81,7 @@ export function visibleTools(
   group: keyof typeof toolGroups,
   challengesConfigured: boolean,
 ) {
+  if (group === "status") return toolGroups.status;
   return toolGroups[group].filter(
     (tool) => tool.path !== "/browser/challenges" || challengesConfigured,
   );
