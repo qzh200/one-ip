@@ -4407,8 +4407,9 @@ body {
 }
 .home-address-row .ip-reputation-badge {
   position: absolute;
-  top: 0;
+  top: 50%;
   right: 0;
+  transform: translateY(-50%);
 }
 .home-address-row:has(.ip-reputation-badge) + .primary-ip-meta {
   padding-right: 96px;
