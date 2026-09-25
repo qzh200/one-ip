@@ -43,6 +43,27 @@ const options = navigationRoutes.map((route) => {
   };
 });
 
+function generateStars(
+  count: number,
+): Array<{ top: number; left: number; size: "sm" | "lg" }> {
+  // Deterministic pseudo-random for stable star positions across renders
+  const rng = (seed: number) => {
+    let s = seed;
+    return () => {
+      s = (s * 9301 + 49297) % 233280;
+      return s / 233280;
+    };
+  };
+  const r = rng(42);
+  return Array.from({ length: count }, () => ({
+    top: r() * 100,
+    left: r() * 100,
+    size: r() > 0.7 ? "lg" : "sm",
+  }));
+}
+
+const STARS = generateStars(30);
+
 export function AppLayout() {
   const { resolvedTheme } = useTheme();
   const mobile = useIsMobile();
@@ -79,6 +100,7 @@ export function AppLayout() {
 
   return (
     <>
+      <BgScene />
       <div className="app-container">
         <header className="mobile-site-header">
           <Link
@@ -198,5 +220,23 @@ export function AppLayout() {
       <BuildInfo />
       <Toaster richColors theme={resolvedTheme} position="top-right" />
     </>
+  );
+}
+
+function BgScene() {
+  return (
+    <div className="bg-scene" aria-hidden="true">
+      <div className="bg-scene__layer bg-scene__tint" />
+      <div className="bg-scene__layer bg-scene__stars">
+        {STARS.map((s, i) => (
+          <span
+            key={i}
+            className={`star star--${s.size}`}
+            style={{ top: `${s.top}%`, left: `${s.left}%` }}
+          />
+        ))}
+      </div>
+      <div className="bg-scene__layer bg-scene__noise" />
+    </div>
   );
 }
