@@ -44,7 +44,7 @@ const labels: Record<string, string> = {
 };
 export default function StatusPage() {
   const mobile = useIsMobile();
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const [detailId, setDetailId] = useState<string | null>(() => {
     const id = params.get("service");
     return services.some((service) => service.id === id) ? id : null;

@@ -30,11 +30,9 @@ const titles = {
   browser: t("浏览器检测概述"),
   ai: t("AI 检测概述"),
 };
-export default function ModuleOverview({
-  group,
-}: {
-  group: keyof typeof toolGroups;
-}) {
+type OverviewGroup = Exclude<keyof typeof toolGroups, "status">;
+
+export default function ModuleOverview({ group }: { group: OverviewGroup }) {
   const tools = useAvailableTools(group);
   return (
     <div className="space-y-3">
