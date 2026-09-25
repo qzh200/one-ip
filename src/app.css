@@ -300,12 +300,24 @@ body {
     color 0.15s ease;
 }
 @media (max-width: 48rem) {
-  /* Mobile nav sits at the bottom of the viewport; open dropdowns upward. */
+  /* Mobile nav sits at the bottom of the viewport; open dropdowns upward.
+     - max-height grows from 60vh → viewport minus nav+padding so the
+       ~9-item AI menu fits without an inner scroll on a normal phone.
+     - width is bounded by the viewport with a sane minimum so a 5-char
+       label ("环境一致性") never wraps.
+     - alignment flips right-anchored for the last dropdown so it grows
+       leftward instead of off the right edge of the screen. */
   .nav-group-dropdown__menu {
     top: auto;
     bottom: calc(100% + 6px);
-    max-height: 60vh;
+    max-height: calc(100vh - 80px - env(safe-area-inset-bottom, 0px));
+    min-width: 140px;
+    max-width: calc(100vw - 24px);
     overflow-y: auto;
+  }
+  .app-nav__items > .nav-group-dropdown:last-child .nav-group-dropdown__menu {
+    left: auto;
+    right: 0;
   }
 }
 .nav-group-dropdown__item:hover {
@@ -2381,72 +2393,88 @@ service-status-page .page-heading h1 {
     margin-bottom: 8px;
   }
   .app-container {
-    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
   }
+  /* Bottom nav on mobile is a "secondary" navigation strip — full-bleed,
+     hairline top border, near-transparent surface. No floating glass pill,
+     no chunky rounded background. The active tab is signalled by a short
+     underline beneath the label, nothing more. */
   .app-nav {
     position: fixed;
     z-index: 40;
-    left: max(12px, env(safe-area-inset-left, 0px));
-    right: max(12px, env(safe-area-inset-right, 0px));
-    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    bottom: 0;
     margin: 0;
-    padding: 5px;
-    border-radius: 26px;
-    background: color-mix(in srgb, var(--card) 78%, transparent);
-    border: 1px solid color-mix(in srgb, var(--foreground) 12%, transparent);
-    box-shadow:
-      0 8px 32px #0002,
-      inset 0 1px 0 #ffffff80;
-    -webkit-backdrop-filter: blur(22px) saturate(180%);
-    backdrop-filter: blur(22px) saturate(180%);
+    padding: 0 0 env(safe-area-inset-bottom, 0px);
+    border-radius: 0;
+    background: color-mix(in srgb, var(--card) 88%, transparent);
+    border-top: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+    box-shadow: none;
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
   }
   .app-nav > button {
     display: none;
   }
   .app-nav .app-nav__items {
     width: 100%;
-  }
-  .app-nav .app-nav__items {
     display: flex;
-    height: 52px;
-  }
-  .app-nav .app-nav__items {
-    width: 100%;
+    height: 44px;
   }
   /* Make the .nav-group-dropdown wrapper a flex item too — without this the
      wrappers sit at content width and 首页 (only NavLink with flex:1) eats
-     all the leftover space, ending up 5x wider than its label. */
+     all the leftover space, ending up 5x wider than its label. Also force
+     the wrapper (and therefore the trigger inside it) to fill the items row,
+     otherwise align-items: center keeps the wrapper at content height
+     (~26px) and the click target shrinks below the recommended 44px. */
   .app-nav .nav-group-dropdown {
     flex: 1 1 0;
     min-width: 0;
+    height: 100%;
   }
   .app-nav .app-nav__link,
   .app-nav .nav-group-dropdown__trigger {
-    height: 52px;
+    position: relative;
+    height: 100%;
     min-width: 0;
     flex: 1 1 0;
-    /* Horizontal label + caret on mobile too — the previous column-stack made
-       the caret sit under the label in cramped space and read as a tab-bar
-       icon, not as a dropdown hint. Keep the caret inline and shrink it. */
     flex-direction: row;
+    justify-content: center;
+    align-items: center;
     gap: 4px;
-    padding: 5px 6px;
-    border-radius: 18px;
-    font-size: 11px;
-    line-height: 16px;
+    padding: 0 6px;
+    border-radius: 0;
+    font-size: 12px;
+    line-height: 18px;
+    background: transparent !important;
+    color: var(--ink-soft);
   }
   .app-nav .app-nav__link--active,
   .app-nav .nav-group-dropdown.is-active .nav-group-dropdown__trigger {
-    background: color-mix(in srgb, var(--primary) 13%, transparent);
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+  /* Short underline beneath the active label — sits ~6px above the nav
+     bottom, ~18px wide, primary colour. Visually quiet but discoverable. */
+  .app-nav .app-nav__link--active::after,
+  .app-nav .nav-group-dropdown.is-active .nav-group-dropdown__trigger::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 6px;
+    width: 18px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--color-primary);
+    transform: translateX(-50%);
   }
   .dark .app-nav {
-    background: color-mix(in srgb, var(--card) 85%, transparent);
-    box-shadow:
-      0 8px 32px #0006,
-      inset 0 1px 0 #ffffff18;
+    background: color-mix(in srgb, var(--card) 82%, transparent);
+    border-top-color: color-mix(in srgb, var(--foreground) 10%, transparent);
   }
   .update-notices {
-    bottom: calc(88px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(52px + env(safe-area-inset-bottom, 0px));
   }
   @supports not (backdrop-filter: blur(1px)) {
     .app-nav {
@@ -2754,80 +2782,14 @@ service-status-page .page-heading h1 {
   .home-page .home-metric {
     font-size: 12px;
   }
-  .app-nav {
-    max-width: 420px;
-    margin-inline: auto;
-    padding: 4px;
-    border-radius: 22px;
-  }
-  .app-nav .app-nav__items,
-  .app-nav .app-nav__link,
-  .app-nav .nav-group-dropdown__trigger {
-    height: 46px;
-  }
-  .app-nav .app-nav__link,
-  .app-nav .nav-group-dropdown__trigger {
-    border-radius: 18px;
-    gap: 2px;
-    padding: 4px 2px;
-    font-size: 10px;
-    line-height: 14px;
-  }
-  .app-container {
-    padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
-  }
-  .update-notices {
-    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
-  }
 }
 
-/* Mobile glass: one bounded surface shared by both themes. */
+/* Mobile glass: hidden on the new full-bleed strip — the bottom nav is a
+   quiet secondary navigation, not a floating glass pill. The SVG stays in
+   the DOM (so future tests don't break) but renders nothing visible. */
 @media (max-width: 48rem) {
-  .app-nav {
-    left: 50%;
-    right: auto;
-    transform: translateX(-50%);
-    /* Stretch the nav across its container so items get equal flex space.
-       Without width:100% the inline-flex items shrink to their content and
-       the shorter label (首页) gets squeezed to a single column. */
-    width: 100%;
-    max-width: 360px;
-    height: 52px;
-    margin-inline: 0;
-    padding: 3px;
-    border: 0;
-    border-radius: 20px;
-  }
-  .app-nav:has(.mobile-nav-glass) {
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
   .mobile-nav-glass {
-    overflow: hidden;
-    box-shadow:
-      0 5px 18px rgb(25 45 65 / 14%),
-      inset 0 0 0 1px rgb(255 255 255 / 65%);
-  }
-  .dark .mobile-nav-glass {
-    box-shadow:
-      0 5px 20px rgb(0 0 0 / 28%),
-      inset 0 0 0 1px rgb(255 255 255 / 12%);
-  }
-  .app-nav:has(.mobile-nav-glass) > .app-nav__items {
-    position: relative;
-    z-index: 1;
-  }
-  .app-nav .app-nav__items {
-    justify-content: center;
-    gap: 0;
-  }
-  .app-nav .app-nav__link,
-  .app-nav .nav-group-dropdown__trigger {
-    justify-content: center;
-    align-items: center;
-    border-radius: 17px;
+    display: none;
   }
 }
 
