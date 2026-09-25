@@ -7,16 +7,12 @@ import { ChevronDown } from "lucide-react";
 export type NavGroupTool = { path: string; label: string };
 
 /**
- * Top-nav group trigger with a hover- and click-driven submenu.
+ * Top-nav group trigger with a click-driven submenu.
  *
  * Behavior:
- * - Opens on `mouseenter` (and closes on `mouseleave` with a small grace period
- *   so the cursor can travel into the dropdown without it collapsing).
- * - Opens/toggles on click for touch and keyboard accessibility.
+ * - Opens/toggles on click (no hover trigger).
  * - Closes on `mousedown` outside the wrapper, on `Escape`, and after any
  *   menu item is selected.
- * - The label itself is also a link to the group's overview, so clicking the
- *   label navigates while clicking the surrounding button area toggles.
  */
 export function NavGroupDropdown({
   label,
@@ -30,24 +26,7 @@ export function NavGroupDropdown({
   isActive: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  function openNow() {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current);
-      closeTimer.current = null;
-    }
-    setOpen(true);
-  }
-
-  function scheduleClose() {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    closeTimer.current = setTimeout(() => {
-      setOpen(false);
-      closeTimer.current = null;
-    }, 150);
-  }
 
   // Close on click outside the wrapper.
   useEffect(() => {
@@ -80,8 +59,6 @@ export function NavGroupDropdown({
         open && "is-open",
         isActive && "is-active",
       )}
-      onMouseEnter={openNow}
-      onMouseLeave={scheduleClose}
     >
       <button
         type="button"
@@ -90,19 +67,7 @@ export function NavGroupDropdown({
         aria-expanded={open}
         aria-haspopup="menu"
       >
-        <Link
-          to={overviewPath}
-          className="nav-group-dropdown__label"
-          onClick={(event) => {
-            // The label is the link; clicking it navigates and closes any
-            // open menu. Stop propagation so the wrapping button's click
-            // handler does not also fire (and re-toggle the menu).
-            event.stopPropagation();
-            setOpen(false);
-          }}
-        >
-          {label}
-        </Link>
+        <span className="nav-group-dropdown__label">{label}</span>
         <ChevronDown aria-hidden="true" className="nav-group-dropdown__caret" />
       </button>
       {open && (
