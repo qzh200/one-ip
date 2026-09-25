@@ -177,17 +177,109 @@ body {
   backdrop-filter: blur(var(--card-blur, 20px)) saturate(1.05);
   box-shadow: 0 14px 32px -24px rgb(var(--shadow) / 0.55);
 }
-.nav-tabs-scroll {
+.app-nav__items {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   min-width: 0;
   flex: 1;
-  border-radius: var(--radius-lg);
+  flex-wrap: wrap;
 }
-.nav-tabs-scroll [data-slot="scroll-area-viewport"] {
-  width: 100%;
+.app-nav__link {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease;
 }
-.nav-tabs-scroll
-  [data-slot="scroll-area-scrollbar"][data-orientation="vertical"] {
-  display: none;
+.app-nav__link:hover {
+  color: var(--color-primary);
+}
+.app-nav__link--active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.nav-group-dropdown {
+  position: relative;
+}
+.nav-group-dropdown__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.92rem;
+  background: transparent;
+  border: 0;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    background-color 0.18s ease;
+}
+.nav-group-dropdown__trigger:hover,
+.nav-group-dropdown.is-open .nav-group-dropdown__trigger,
+.nav-group-dropdown.is-active .nav-group-dropdown__trigger {
+  color: var(--color-primary);
+}
+.nav-group-dropdown__label {
+  color: inherit;
+  text-decoration: none;
+}
+.nav-group-dropdown__caret {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.18s ease;
+}
+.nav-group-dropdown.is-open .nav-group-dropdown__caret {
+  transform: rotate(180deg);
+}
+.nav-group-dropdown__menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+  padding: 6px;
+  border-radius: 12px;
+  border: 1px solid rgb(var(--line) / 0.4);
+  background: var(--card-fill-solid);
+  -webkit-backdrop-filter: blur(var(--card-blur, 18px));
+  backdrop-filter: blur(var(--card-blur, 18px));
+  box-shadow: 0 14px 32px -24px rgb(var(--shadow) / 0.55);
+}
+.nav-group-dropdown__item {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--ink);
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+@media (max-width: 48rem) {
+  /* Mobile nav sits at the bottom of the viewport; open dropdowns upward. */
+  .nav-group-dropdown__menu {
+    top: auto;
+    bottom: calc(100% + 6px);
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+}
+.nav-group-dropdown__item:hover {
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
 }
 .app-nav .site-icon {
   width: 16px;
@@ -1535,81 +1627,7 @@ body {
   gap: 6px;
 }
 
-/* Content header: breadcrumb (left) + tools dropdown (right).
-   Replaces the previous .tool-subnav row (removed in Task 12). */
-.content-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 16px;
-  flex-wrap: wrap;
-}
-
-.breadcrumb__list {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 0.85rem;
-  color: var(--ink-soft);
-}
-
-.breadcrumb__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.breadcrumb__link {
-  color: var(--ink-soft);
-  text-decoration: none;
-  border-radius: 4px;
-  padding: 2px 4px;
-  transition:
-    color 0.15s ease,
-    background-color 0.15s ease;
-}
-
-.breadcrumb__link:hover {
-  color: var(--color-primary);
-  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-}
-
-.breadcrumb__current {
-  color: var(--ink);
-  font-weight: 600;
-  padding: 2px 4px;
-}
-
-.breadcrumb__sep {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  color: var(--ink-faint);
-  opacity: 0.6;
-}
-
-.tools-dropdown__trigger {
-  gap: 6px;
-}
-
-.tools-dropdown__content {
-  min-width: 240px;
-  max-height: 70vh;
-  overflow-y: auto;
-}
-
-.tools-dropdown__item {
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.service-status-page .page-heading h1 {
+service-status-page .page-heading h1 {
   font-size: 1.25rem;
 }
 .service-summary {
@@ -2264,17 +2282,15 @@ body {
   .app-nav .site-home-link {
     display: none;
   }
-  .app-nav [role="tablist"] {
+  .app-nav .app-nav__items {
     width: 100%;
     gap: 0;
   }
-  .app-nav [role="tab"] {
+  .app-nav .app-nav__link,
+  .app-nav .nav-group-dropdown__trigger {
     flex: 1;
     padding-inline: 5px;
     font-size: 13px;
-  }
-  .app-nav [role="tab"] svg {
-    display: none;
   }
   .app-nav > button {
     width: 32px;
@@ -2357,40 +2373,28 @@ body {
   .app-nav > button {
     display: none;
   }
-  .app-nav .nav-tabs-scroll {
+  .app-nav .app-nav__items {
     width: 100%;
   }
-  .app-nav [role="tablist"] {
+  .app-nav .app-nav__items {
     display: flex;
-    width: 100%;
-    height: 56px;
+    height: 52px;
   }
-  .app-nav [role="tab"] {
-    height: 56px;
+  .app-nav .app-nav__link,
+  .app-nav .nav-group-dropdown__trigger {
+    height: 52px;
     min-width: 0;
     flex: 1 1 0;
     flex-direction: column;
-    gap: 3px;
+    gap: 0;
     padding: 5px 2px;
-    border-radius: 21px;
+    border-radius: 18px;
     font-size: 11px;
     line-height: 16px;
   }
-  .app-nav [role="tab"] svg {
-    display: block;
-    width: 21px;
-    height: 21px;
-  }
-  .app-nav [role="tab"] .nav-full {
-    display: none;
-  }
-  .app-nav [role="tab"] .nav-short {
-    display: inline;
-  }
-  .app-nav [role="tablist"] > span {
-    border-radius: 21px;
+  .app-nav .app-nav__link--active,
+  .app-nav .nav-group-dropdown.is-active .nav-group-dropdown__trigger {
     background: color-mix(in srgb, var(--primary) 13%, transparent);
-    box-shadow: inset 0 1px 0 #ffffff55;
   }
   .dark .app-nav {
     background: color-mix(in srgb, var(--card) 85%, transparent);
@@ -2662,15 +2666,13 @@ body {
     width: 26px;
     height: 26px;
   }
-  .app-nav .nav-tabs-scroll {
+  .app-nav .app-nav__items {
     border-radius: 0;
-  }
-  .app-nav [role="tablist"] {
-    height: 40px;
     gap: 24px;
-    border-radius: 0;
+    flex-wrap: nowrap;
   }
-  .app-nav [role="tab"] {
+  .app-nav .app-nav__link,
+  .app-nav .nav-group-dropdown__trigger {
     height: 40px;
     padding: 0 2px;
     border-radius: 0;
@@ -2678,18 +2680,14 @@ body {
     font-weight: 500;
     background: transparent;
   }
-  .app-nav [role="tab"] svg {
-    display: none;
-  }
-  .app-nav [role="tab"]:hover {
+  .app-nav .app-nav__link:hover {
     color: var(--foreground);
   }
-  .app-nav [role="tab"][data-state="active"] {
+  .app-nav .app-nav__link--active,
+  .app-nav .nav-group-dropdown.is-active .nav-group-dropdown__trigger {
     color: var(--primary);
     font-weight: 600;
-  }
-  .app-nav [role="tablist"] > span {
-    display: none;
+    background: transparent;
   }
   .app-nav .desktop-preferences {
     gap: 4px;
@@ -2719,23 +2717,18 @@ body {
     padding: 4px;
     border-radius: 22px;
   }
-  .app-nav [role="tablist"],
-  .app-nav [role="tab"] {
+  .app-nav .app-nav__items,
+  .app-nav .app-nav__link,
+  .app-nav .nav-group-dropdown__trigger {
     height: 46px;
   }
-  .app-nav [role="tab"] {
+  .app-nav .app-nav__link,
+  .app-nav .nav-group-dropdown__trigger {
     border-radius: 18px;
     gap: 2px;
     padding: 4px 2px;
     font-size: 10px;
     line-height: 14px;
-  }
-  .app-nav [role="tab"] svg {
-    width: 19px;
-    height: 19px;
-  }
-  .app-nav [role="tablist"] > span {
-    border-radius: 18px;
   }
   .app-container {
     padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px));
@@ -2783,23 +2776,19 @@ body {
       0 5px 20px rgb(0 0 0 / 28%),
       inset 0 0 0 1px rgb(255 255 255 / 12%);
   }
-  .app-nav:has(.mobile-nav-glass) > .nav-tabs-scroll {
+  .app-nav:has(.mobile-nav-glass) > .app-nav__items {
     position: relative;
     z-index: 1;
   }
-  .app-nav [role="tablist"] {
+  .app-nav .app-nav__items {
     justify-content: center;
     gap: 0;
   }
-  .app-nav [role="tab"] {
+  .app-nav .app-nav__link,
+  .app-nav .nav-group-dropdown__trigger {
     justify-content: center;
     align-items: center;
     border-radius: 17px;
-  }
-  .app-nav [role="tablist"] > span {
-    border-radius: 17px;
-    box-shadow: none;
-    background: color-mix(in srgb, var(--primary) 13%, transparent);
   }
 }
 

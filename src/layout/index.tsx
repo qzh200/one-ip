@@ -1,46 +1,34 @@
-import { lazy, Suspense, useEffect, useRef } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { BackLink } from "@/components/back-link";
 import { BuildInfo } from "@/components/build-info";
 import { HomePageSkeleton } from "@/components/home-page-skeleton";
+import { NavGroupDropdown } from "@/components/nav-group-dropdown";
 import { AppUpdateChecker } from "@/components/providers/app-update-checker";
 import { ThemeToggleButton } from "@/components/theme/theme-toggle-button";
 import { Pending } from "@/components/toolkit";
-import { AnimatedSegmentedTabs } from "@/components/ui/animated-segmented-tabs";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { UnderlineHover } from "@/components/underline-hover";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/hooks/use-theme";
 import { t } from "@/i18n";
-import { Search, Globe, Cable, Activity, Sparkles } from "lucide-react";
-import { Tabs } from "radix-ui";
+import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { RouteErrorBoundary } from "./route-error-boundary";
-import { activeNavigationRoute, navigationRoutes } from "./routes";
+import { activeNavigationRoute, toolGroups } from "./routes";
 
 const MobileNavGlass = lazy(() => import("@/components/mobile-nav-glass"));
 
-const menuIcons = {
-  "/": Search,
-  "/browser/": Globe,
-  "/network/": Cable,
-  "/ai/": Sparkles,
-  "/status/": Activity,
-};
+function normalizePath(path: string): string {
+  return path.replace(/\/+$/, "") || "/";
+}
 
-const options = navigationRoutes.map((route) => {
-  const Icon = menuIcons[route.value];
-  return {
-    value: route.value,
-    label: (
-      <>
-        <Icon className="size-4" strokeWidth={1.75} aria-hidden="true" />
-        <span className="nav-full">{route.label}</span>
-        <span className="nav-short">{route.short}</span>
-      </>
-    ),
-  };
-});
+function isGroupActive(
+  group: "network" | "browser" | "ai",
+  normalizedPath: string,
+): boolean {
+  if (normalizedPath === `/${group}`) return true;
+  return toolGroups[group].some((tool) => tool.path === normalizedPath);
+}
 
 function generateStars(
   count: number,
@@ -67,34 +55,11 @@ export function AppLayout() {
   const { resolvedTheme } = useTheme();
   const mobile = useIsMobile();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const navRef = useRef<HTMLElement>(null);
+  const normalizedPath = normalizePath(pathname);
   const activeRoute = activeNavigationRoute(pathname);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const viewport = navRef.current?.querySelector<HTMLElement>(
-      "[data-slot=scroll-area-viewport]",
-    );
-    const trigger = navRef.current?.querySelector<HTMLElement>(
-      "[role=tab][data-state=active]",
-    );
-    if (!viewport || !trigger) return;
-    const parent = viewport.getBoundingClientRect();
-    const child = trigger.getBoundingClientRect();
-    const offset =
-      child.left < parent.left
-        ? child.left - parent.left - 8
-        : child.right > parent.right
-          ? child.right - parent.right + 8
-          : 0;
-    if (offset)
-      viewport.scrollBy({
-        left: offset,
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-          ? "instant"
-          : "smooth",
-      });
   }, [pathname]);
 
   return (
@@ -103,52 +68,67 @@ export function AppLayout() {
       <BackLink />
       <ThemeToggleButton />
       <div className="app-container">
-        <AnimatedSegmentedTabs
-          label={t("网络诊断工具")}
-          options={options}
-          value={activeRoute}
-          onValueChange={(value) => {
-            if (value !== activeRoute) navigate(value);
-          }}
-          activationMode="manual"
-          className="min-w-0"
-          listClassName="h-9 w-max justify-start gap-0.5 bg-transparent p-0"
-          highlightClassName="rounded-lg bg-primary/10 shadow-none ring-0"
-          triggerClassName="h-9 flex-none rounded-lg border-0 px-2 text-[13px] text-muted-foreground hover:bg-accent/50 data-[state=active]:font-semibold data-[state=active]:text-primary"
-          renderList={(list) => (
-            <nav ref={navRef} className="app-nav" aria-label={t("主导航")}>
-              {mobile && (
-                <Suspense fallback={null}>
-                  <MobileNavGlass light={resolvedTheme === "light"} />
-                </Suspense>
-              )}
-              <ScrollArea className="nav-tabs-scroll">
-                {list}
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
-            </nav>
+        <nav className="app-nav" aria-label={t("主导航")}>
+          {mobile && (
+            <Suspense fallback={null}>
+              <MobileNavGlass light={resolvedTheme === "light"} />
+            </Suspense>
           )}
-        >
-          <Tabs.Content value={activeRoute} asChild>
-            <main className="outline-none">
-              <RouteErrorBoundary key={activeRoute}>
-                <Suspense
-                  fallback={
-                    activeRoute === "/" ? (
-                      <HomePageSkeleton />
-                    ) : (
-                      <p className="status-line">
-                        <Pending>{t("正在加载页面…")}</Pending>
-                      </p>
-                    )
-                  }
-                >
-                  <Outlet />
-                </Suspense>
-              </RouteErrorBoundary>
-            </main>
-          </Tabs.Content>
-        </AnimatedSegmentedTabs>
+          <div className="app-nav__items">
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                cn("app-nav__link", isActive && "app-nav__link--active")
+              }
+            >
+              {t("首页")}
+            </NavLink>
+            <NavGroupDropdown
+              label={t("AI 检测")}
+              overviewPath="/ai"
+              tools={toolGroups.ai}
+              isActive={isGroupActive("ai", normalizedPath)}
+            />
+            <NavLink
+              to="/status"
+              className={({ isActive }) =>
+                cn("app-nav__link", isActive && "app-nav__link--active")
+              }
+            >
+              {t("服务状态")}
+            </NavLink>
+            <NavGroupDropdown
+              label={t("网络检测")}
+              overviewPath="/network"
+              tools={toolGroups.network}
+              isActive={isGroupActive("network", normalizedPath)}
+            />
+            <NavGroupDropdown
+              label={t("浏览器检测")}
+              overviewPath="/browser"
+              tools={toolGroups.browser}
+              isActive={isGroupActive("browser", normalizedPath)}
+            />
+          </div>
+        </nav>
+        <main className="outline-none">
+          <RouteErrorBoundary key={activeRoute}>
+            <Suspense
+              fallback={
+                activeRoute === "/" ? (
+                  <HomePageSkeleton />
+                ) : (
+                  <p className="status-line">
+                    <Pending>{t("正在加载页面…")}</Pending>
+                  </p>
+                )
+              }
+            >
+              <Outlet />
+            </Suspense>
+          </RouteErrorBoundary>
+        </main>
         <footer className="app-footer">
           © {new Date().getFullYear()} IP ·{" "}
           <UnderlineHover asChild>
