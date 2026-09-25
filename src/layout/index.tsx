@@ -3,9 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { BackLink } from "@/components/back-link";
 import { BuildInfo } from "@/components/build-info";
 import { HomePageSkeleton } from "@/components/home-page-skeleton";
-import { LanguageSelect } from "@/components/language-select";
 import { AppUpdateChecker } from "@/components/providers/app-update-checker";
-import { ShareSite } from "@/components/share-site";
 import { ThemeToggleButton } from "@/components/theme/theme-toggle-button";
 import { Pending } from "@/components/toolkit";
 import { AnimatedSegmentedTabs } from "@/components/ui/animated-segmented-tabs";
@@ -105,19 +103,6 @@ export function AppLayout() {
       <BackLink />
       <ThemeToggleButton />
       <div className="app-container">
-        <header className="mobile-site-header">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-sm font-semibold"
-            aria-label={t("IP 网络工具概览")}
-          >
-            <img src="/icon.svg" width="24" height="24" alt="" />
-          </Link>
-          <div className="flex items-center gap-1">
-            <ShareSite />
-            <LanguageSelect />
-          </div>
-        </header>
         <AnimatedSegmentedTabs
           label={t("网络诊断工具")}
           options={options}
@@ -137,21 +122,10 @@ export function AppLayout() {
                   <MobileNavGlass light={resolvedTheme === "light"} />
                 </Suspense>
               )}
-              <Link
-                to="/"
-                aria-label={t("IP 网络工具概览")}
-                className="site-home-link flex size-9 shrink-0 items-center justify-center rounded-lg focus-visible:outline-2 focus-visible:outline-ring"
-              >
-                <img src="/icon.svg" alt="" width="32" height="32" />
-              </Link>
               <ScrollArea className="nav-tabs-scroll">
                 {list}
                 <ScrollBar orientation="horizontal" />
               </ScrollArea>
-              <div className="desktop-preferences flex items-center gap-1">
-                <ShareSite />
-                <LanguageSelect />
-              </div>
             </nav>
           )}
         >
