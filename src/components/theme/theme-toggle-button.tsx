@@ -1,38 +1,44 @@
-import type { MouseEvent } from "react";
-import { Button } from "@/components/ui/button";
 import { useTheme } from "@/hooks/use-theme";
 import { t } from "@/i18n";
 import { cn } from "@/lib/utils";
-import { Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun } from "lucide-react";
 
-export function ThemeToggleButton({
-  className,
-  label,
-}: {
-  className?: string;
-  label?: string;
-}) {
-  const { resolvedTheme, setTheme } = useTheme();
-  const buttonLabel =
-    label ??
-    (resolvedTheme === "dark" ? t("切换为浅色模式") : t("切换为深色模式"));
+const CYCLE: Array<"light" | "dark" | "system"> = ["light", "dark", "system"];
 
-  function handleToggle(_event: MouseEvent<HTMLButtonElement>) {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+export function ThemeToggleButton({ className }: { className?: string }) {
+  const { theme, setTheme } = useTheme();
+
+  function handleClick() {
+    const idx = CYCLE.indexOf(theme);
+    const next = CYCLE[(idx + 1) % CYCLE.length];
+    setTheme(next);
   }
 
+  const label = t("切换主题（浅色 / 深色 / 跟随系统）");
+
   return (
-    <Button
+    <button
       type="button"
-      aria-label={buttonLabel}
-      title={buttonLabel}
-      className={cn("shrink-0 rounded-lg shadow-none", className)}
-      onClick={handleToggle}
-      size="icon-sm"
-      variant="ghost"
+      onClick={handleClick}
+      aria-label={label}
+      title={label}
+      className={cn("theme-toggle", className)}
     >
-      <Moon aria-hidden="true" className="dark:hidden" />
-      <Sun aria-hidden="true" className="hidden dark:block" />
-    </Button>
+      <Sun
+        aria-hidden="true"
+        strokeWidth={1.75}
+        className="theme-toggle__icon theme-toggle__icon--light"
+      />
+      <Moon
+        aria-hidden="true"
+        strokeWidth={1.75}
+        className="theme-toggle__icon theme-toggle__icon--dark"
+      />
+      <Monitor
+        aria-hidden="true"
+        strokeWidth={1.75}
+        className="theme-toggle__icon theme-toggle__icon--system"
+      />
+    </button>
   );
 }

@@ -103,6 +103,7 @@ export function AppLayout() {
     <>
       <BgScene />
       <BackLink />
+      <ThemeToggleButton />
       <div className="app-container">
         <header className="mobile-site-header">
           <Link
@@ -115,7 +116,6 @@ export function AppLayout() {
           <div className="flex items-center gap-1">
             <ShareSite />
             <LanguageSelect />
-            <ThemeToggleButton className="size-8 rounded-full text-muted-foreground" />
           </div>
         </header>
         <AnimatedSegmentedTabs
@@ -151,7 +151,6 @@ export function AppLayout() {
               <div className="desktop-preferences flex items-center gap-1">
                 <ShareSite />
                 <LanguageSelect />
-                <ThemeToggleButton className="size-9 shrink-0 rounded-lg text-muted-foreground" />
               </div>
             </nav>
           )}
