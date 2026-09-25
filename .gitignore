@@ -30,3 +30,6 @@ worker-configuration.d.ts
 
 # Deployment secrets (never commit)
 .secrets.*.env
+
+# Auto-generated theme tokens (from config/site.yaml)
+src/generated/theme.css
