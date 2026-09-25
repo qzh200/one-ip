@@ -14,6 +14,10 @@ export type NavGroupTool = { path: string; label: string };
  *   so the user can move the cursor into the menu without it dismissing).
  * - Click on the trigger button (label or caret) toggles open/closed.
  * - Closes on Escape and on `mousedown` outside the wrapper.
+ *
+ * - `overviewPath` is optional. When omitted, no "概述" link is rendered at
+ *   the top of the menu (e.g. for groups where the items are filters rather
+ *   than navigation).
  */
 export function NavGroupDropdown({
   label,
@@ -22,7 +26,7 @@ export function NavGroupDropdown({
   isActive,
 }: {
   label: string;
-  overviewPath: string;
+  overviewPath?: string;
   tools: readonly NavGroupTool[];
   isActive: boolean;
 }) {
@@ -99,14 +103,16 @@ export function NavGroupDropdown({
       </button>
       {open && (
         <div className="nav-group-dropdown__menu" role="menu">
-          <Link
-            to={overviewPath}
-            className="nav-group-dropdown__item"
-            role="menuitem"
-            onClick={() => setOpen(false)}
-          >
-            {t("概述")}
-          </Link>
+          {overviewPath && (
+            <Link
+              to={overviewPath}
+              className="nav-group-dropdown__item"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+            >
+              {t("概述")}
+            </Link>
+          )}
           {tools.map((tool) => (
             <Link
               key={tool.path}

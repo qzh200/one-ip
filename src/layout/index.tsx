@@ -23,10 +23,17 @@ function normalizePath(path: string): string {
 }
 
 function isGroupActive(
-  group: "network" | "browser" | "ai",
+  group: "network" | "browser" | "ai" | "status",
   normalizedPath: string,
 ): boolean {
   if (normalizedPath === `/${group}`) return true;
+  if (group === "status") {
+    // /status pages share the dropdown with the overview link, so any
+    // /status/* path keeps the trigger in its active style.
+    return (
+      normalizedPath === "/status" || normalizedPath.startsWith("/status/")
+    );
+  }
   return toolGroups[group].some((tool) => tool.path === normalizedPath);
 }
 
@@ -90,14 +97,11 @@ export function AppLayout() {
               tools={toolGroups.ai}
               isActive={isGroupActive("ai", normalizedPath)}
             />
-            <NavLink
-              to="/status"
-              className={({ isActive }) =>
-                cn("app-nav__link", isActive && "app-nav__link--active")
-              }
-            >
-              {t("服务状态")}
-            </NavLink>
+            <NavGroupDropdown
+              label={t("服务状态")}
+              tools={toolGroups.status}
+              isActive={isGroupActive("status", normalizedPath)}
+            />
             <NavGroupDropdown
               label={t("网络检测")}
               overviewPath="/network"
