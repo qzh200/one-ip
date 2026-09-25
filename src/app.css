@@ -160,7 +160,14 @@ body {
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 16px 20px;
+  /* Push content below the fixed corner buttons (BackLink top-left +
+     ThemeToggle top-right: 40px tall, sitting at top: max(18px,
+     env(safe-area-inset-top, 0px))). 18 + 40 + 12 breathing room on
+     viewports without a notch; + env(safe-area-inset-top) on notched ones. */
+  padding-top: max(70px, calc(env(safe-area-inset-top, 0px) + 52px));
+  padding-right: 20px;
+  padding-bottom: 16px;
+  padding-left: 20px;
   position: relative;
   z-index: 1;
 }
@@ -239,10 +246,25 @@ body {
 .nav-group-dropdown__caret {
   width: 14px;
   height: 14px;
+  flex-shrink: 0;
   transition: transform 0.18s ease;
 }
 .nav-group-dropdown.is-open .nav-group-dropdown__caret {
   transform: rotate(180deg);
+}
+/* Mobile: hide the caret — the active-state background already signals which
+   group the user is in, and the caret just steals horizontal space from the
+   label. Compact labels fit better in a 5-tab bottom nav. */
+@media (max-width: 48rem) {
+  .nav-group-dropdown__caret {
+    display: none;
+  }
+  .nav-group-dropdown__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 .nav-group-dropdown__menu {
   position: absolute;
@@ -1199,7 +1221,11 @@ body {
 }
 @media (max-width: 36rem) {
   .app-container {
-    padding: 10px 12px;
+    /* Keep the top padding from clearing the fixed corner buttons (see base
+       .app-container). Only tighten the side / bottom on small phones. */
+    padding-right: 12px;
+    padding-bottom: 10px;
+    padding-left: 12px;
   }
   .app-nav {
     gap: 8px;
@@ -2384,14 +2410,27 @@ service-status-page .page-heading h1 {
     display: flex;
     height: 52px;
   }
+  .app-nav .app-nav__items {
+    width: 100%;
+  }
+  /* Make the .nav-group-dropdown wrapper a flex item too — without this the
+     wrappers sit at content width and 首页 (only NavLink with flex:1) eats
+     all the leftover space, ending up 5x wider than its label. */
+  .app-nav .nav-group-dropdown {
+    flex: 1 1 0;
+    min-width: 0;
+  }
   .app-nav .app-nav__link,
   .app-nav .nav-group-dropdown__trigger {
     height: 52px;
     min-width: 0;
     flex: 1 1 0;
-    flex-direction: column;
-    gap: 0;
-    padding: 5px 2px;
+    /* Horizontal label + caret on mobile too — the previous column-stack made
+       the caret sit under the label in cramped space and read as a tab-bar
+       icon, not as a dropdown hint. Keep the caret inline and shrink it. */
+    flex-direction: row;
+    gap: 4px;
+    padding: 5px 6px;
     border-radius: 18px;
     font-size: 11px;
     line-height: 16px;
@@ -2748,15 +2787,11 @@ service-status-page .page-heading h1 {
     left: 50%;
     right: auto;
     transform: translateX(-50%);
-    width: calc(
-      100% - 2 *
-        max(
-          16px,
-          env(safe-area-inset-left, 0px),
-          env(safe-area-inset-right, 0px)
-        )
-    );
-    max-width: 400px;
+    /* Stretch the nav across its container so items get equal flex space.
+       Without width:100% the inline-flex items shrink to their content and
+       the shorter label (首页) gets squeezed to a single column. */
+    width: 100%;
+    max-width: 360px;
     height: 52px;
     margin-inline: 0;
     padding: 3px;
