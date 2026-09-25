@@ -1014,11 +1014,6 @@ body {
   gap: 6px;
   font-size: 0.78rem;
 }
-.filter-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
 .status-grid .tool-card [data-slot="card-title"] {
   font-size: 1rem;
   color: var(--foreground);
@@ -2821,18 +2816,6 @@ service-status-page .page-heading h1 {
     flex-wrap: nowrap;
     gap: 6px;
     margin-bottom: 10px;
-  }
-  .service-status-page .filter-tabs {
-    display: flex;
-    min-width: 0;
-    flex: 1;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .service-status-page .filter-tabs button {
-    flex-shrink: 0;
-    padding-inline: 8px;
   }
   .service-status-page .toolbar > button {
     flex-shrink: 0;
