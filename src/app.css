@@ -165,6 +165,8 @@ body {
   z-index: 1;
 }
 .app-nav {
+  position: relative;
+  z-index: 20;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -252,10 +254,15 @@ body {
   padding: 6px;
   border-radius: 12px;
   border: 1px solid rgb(var(--line) / 0.4);
-  background: var(--card-fill-solid);
-  -webkit-backdrop-filter: blur(var(--card-blur, 18px));
-  backdrop-filter: blur(var(--card-blur, 18px));
+  /* Fully opaque white — matches what a shadcn Dialog/popup would look like
+     once its `bg-black/10` dim overlay is removed. The dropdown has no dim
+     overlay, so we drop the backdrop-filter and use solid white to fully
+     obscure busy page content (IP cards, badges, star ratings). */
+  background: #fff;
   box-shadow: 0 14px 32px -16px rgb(var(--shadow) / 0.6);
+}
+.dark .nav-group-dropdown__menu {
+  background: rgb(20 24 52);
 }
 .nav-group-dropdown__item {
   display: block;
