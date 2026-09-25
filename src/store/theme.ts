@@ -1,12 +1,9 @@
-import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-
-export const themeTransitionPendingAtom = atom(false);
 
 export type Theme = "light" | "dark" | "system";
 
 export const themeAtom = atomWithStorage<Theme>(
-  "theme",
+  "one-ip-theme",
   "system",
   {
     getItem(key, initialValue) {

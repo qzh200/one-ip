@@ -28,10 +28,51 @@
         return;
       }
       try {
-        var theme = localStorage.getItem("theme") || "system";
-        var dark = theme === "dark" || (theme !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-        root.classList.toggle("dark", dark);
-        root.style.colorScheme = dark ? "dark" : "light";
+        // Three-state theme boot (ecosystem parity).
+        var NEW_KEY = "one-ip-theme";
+        var LEGACY_KEY = "theme";
+        var stored = null;
+        try { stored = localStorage.getItem(NEW_KEY); } catch (e) {}
+        // Legacy key migration (one-time).
+        if (!stored) {
+          try {
+            var legacy = localStorage.getItem(LEGACY_KEY);
+            if (legacy === "light" || legacy === "dark" || legacy === "system") {
+              stored = legacy;
+              try { localStorage.setItem(NEW_KEY, legacy); } catch (e) {}
+            }
+          } catch (e) {}
+        }
+        var choice = (stored === "light" || stored === "dark" || stored === "system")
+          ? stored
+          : "system";
+        var mq = window.matchMedia("(prefers-color-scheme: dark)");
+        var resolved = choice === "system" ? (mq.matches ? "dark" : "light") : choice;
+        function apply() {
+          resolved = choice === "system" ? (mq.matches ? "dark" : "light") : choice;
+          root.setAttribute("data-theme", resolved);
+          root.setAttribute("data-theme-choice", choice);
+          root.classList.toggle("dark", resolved === "dark");
+          root.style.colorScheme = resolved;
+        }
+        apply();
+        if (typeof mq.addEventListener === "function") {
+          mq.addEventListener("change", function () {
+            if (choice === "system") apply();
+          });
+        }
+        window.oneIpTheme = {
+          get: function () { return choice; },
+          set: function (next) {
+            if (next !== "light" && next !== "dark" && next !== "system") next = "system";
+            choice = next;
+            try { localStorage.setItem(NEW_KEY, choice); } catch (e) {}
+            apply();
+            // Notify React so theme-aware components re-render.
+            window.dispatchEvent(new StorageEvent("storage", { key: NEW_KEY }));
+          },
+        };
+        // Preserve legacy data-color / data-radius / data-layout / data-font-size attrs.
         ["color", "radius", "layout", "font-size"].forEach(function (key) {
           var value = localStorage.getItem("ui-" + key);
           if (value && value !== "default") root.setAttribute("data-" + key, value);
