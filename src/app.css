@@ -166,7 +166,9 @@ body {
 }
 .app-nav {
   position: relative;
-  z-index: 20;
+  /* Sit above any in-page z-index (shadcn Card link overlay = z-10, the
+     IP-card "重试" button = z-20). 30 keeps a buffer for future tweaks. */
+  z-index: 30;
   display: flex;
   align-items: center;
   gap: 8px;
