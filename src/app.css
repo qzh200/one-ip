@@ -1,5 +1,121 @@
 @import "./index.css";
 
+/* Ecosystem font stack (replaces Geist Variable). */
+html,
+body {
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Microsoft YaHei",
+    "Noto Sans SC",
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
+
+/* Ecosystem neutral structural tokens (light / dark). */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ink: #3d4266;
+  --ink-soft: #6c729b;
+  --ink-faint: #a2a6c6;
+  --line: 122 129 186;
+  --shadow: 90 98 164;
+  --card-fill: rgb(255 255 255 / var(--card-bg-opacity, 0.6));
+  --card-fill-hover: rgb(
+    255 255 255 / calc(var(--card-bg-opacity, 0.6) + 0.16)
+  );
+  --star: 104 128 226;
+  --orb-opacity: 0.5;
+  --noise-opacity: 0.045;
+}
+
+:root[data-theme="dark"],
+.dark {
+  color-scheme: dark;
+  --ink: #e9ebfd;
+  --ink-soft: #a4aad0;
+  --ink-faint: #7d84ae;
+  --line: 150 160 232;
+  --shadow: 3 6 24;
+  --card-fill: rgb(17 21 48 / var(--card-bg-opacity, 0.6));
+  --card-fill-hover: rgb(32 38 82 / calc(var(--card-bg-opacity, 0.6) + 0.14));
+  --star: 186 201 255;
+  --orb-opacity: 0.36;
+  --noise-opacity: 0.06;
+}
+
+/* shadcn bridge: ecosystem tokens → shadcn variable names.
+   View components use shadcn utilities; this lets them work without modification.
+   Both `:root[data-theme="..."]` (ecosystem) AND `:root`/`.dark` (runtime-only
+   shadcn path used by Task 3) define the same values for full coverage. */
+:root,
+:root[data-theme="light"] {
+  --background: var(--color-bg, #f4f6fe);
+  --foreground: var(--ink);
+  --card: var(--card-fill);
+  --card-foreground: var(--ink);
+  --popover: var(--card-fill);
+  --popover-foreground: var(--ink);
+  --primary: var(--color-primary, #7f9df2);
+  --primary-foreground: white;
+  --secondary: var(--card-fill);
+  --secondary-foreground: var(--ink);
+  --muted: rgb(var(--line) / 0.06);
+  --muted-foreground: var(--ink-soft);
+  --accent: rgb(var(--line) / 0.08);
+  --accent-foreground: var(--ink);
+  --border: rgb(var(--line) / 0.35);
+  --input: rgb(var(--line) / 0.5);
+  --ring: var(--color-primary);
+  --destructive: #d96b5f;
+  /* one-ip semantic colors (preserved) */
+  --success: #1b8a2d;
+  --success-soft: #d1fae5;
+  --success-text: #065f46;
+  --good: #6fcf7c;
+  --warning: #f0c040;
+  --danger: #cf222e;
+  --info-soft: #dbeafe;
+  --info-text: #1d4ed8;
+  --subtle: #8b949e;
+  --tool-shadow: 0 1px 4px rgb(0 0 0 / 6%), 0 4px 12px rgb(0 0 0 / 4%);
+}
+
+:root[data-theme="dark"],
+.dark {
+  --background: var(--color-bg, #0e1230);
+  --foreground: var(--ink);
+  --card: var(--card-fill);
+  --card-foreground: var(--ink);
+  --popover: var(--card-fill);
+  --popover-foreground: var(--ink);
+  --primary: var(--color-primary, #9ab2ff);
+  --primary-foreground: #0e1230;
+  --secondary: var(--card-fill);
+  --secondary-foreground: var(--ink);
+  --muted: rgb(var(--line) / 0.1);
+  --muted-foreground: var(--ink-soft);
+  --accent: rgb(var(--line) / 0.14);
+  --accent-foreground: var(--ink);
+  --border: rgb(var(--line) / 0.3);
+  --input: rgb(var(--line) / 0.4);
+  --ring: var(--color-primary);
+  --destructive: #f08074;
+  --success-soft: #123e31;
+  --success-text: #a7f3d0;
+  --info-soft: #162d4e;
+  --info-text: #93c5fd;
+  --tool-shadow: 0 1px 4px rgb(0 0 0 / 40%), 0 4px 12px rgb(0 0 0 / 30%);
+}
+
 @media (max-width: 767px) {
   html,
   body {
@@ -16,10 +132,12 @@
   }
 }
 
-/* Shared brand color for both light and dark appearance. */
+/* Sidebar-specific shadcn variables: chain through to the ecosystem primary
+   set by the shadcn bridge layer above. The bridge intentionally leaves
+   --sidebar-* untouched so this block can keep the original sidebar
+   palette synced to whatever --primary happens to be. */
 :root,
 :root[data-color] {
-  --primary: oklch(0.5645 0.163 253.27);
   --primary-foreground: #fff;
   --ring: var(--primary);
   --sidebar-primary: var(--primary);
@@ -27,47 +145,6 @@
   --sidebar-ring: var(--primary);
 }
 
-/* Reference geometry: 1000px shell, system typography, compact tools. */
-:root {
-  --background: #fafafa;
-  --foreground: #1a1a1a;
-  --card: #fff;
-  --card-foreground: #1a1a1a;
-  --muted: #f8f9fb;
-  --muted-foreground: #57606a;
-  --border: #e1e4e8;
-  --input: #d8dce0;
-  --accent: #eef1f5;
-  --secondary: #eef1f5;
-  --subtle: #8b949e;
-  --success: #1b8a2d;
-  --success-soft: #d1fae5;
-  --success-text: #065f46;
-  --good: #6fcf7c;
-  --warning: #f0c040;
-  --danger: #cf222e;
-  --info-soft: #dbeafe;
-  --info-text: #1d4ed8;
-  --tool-shadow: 0 1px 4px rgb(0 0 0 / 6%), 0 4px 12px rgb(0 0 0 / 4%);
-}
-.dark {
-  --background: #0d1117;
-  --foreground: #e6edf3;
-  --card: #161b22;
-  --card-foreground: #e6edf3;
-  --muted: #161b22;
-  --muted-foreground: #c9d1d9;
-  --border: #30363d;
-  --input: #444c56;
-  --accent: #21262d;
-  --secondary: #21262d;
-  --subtle: #8b949e;
-  --success-soft: #123e31;
-  --success-text: #a7f3d0;
-  --info-soft: #162d4e;
-  --info-text: #93c5fd;
-  --tool-shadow: 0 1px 4px rgb(0 0 0 / 40%), 0 4px 12px rgb(0 0 0 / 30%);
-}
 body {
   line-height: 1.6;
 }
