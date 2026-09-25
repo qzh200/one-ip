@@ -7,12 +7,13 @@ import { ChevronDown } from "lucide-react";
 export type NavGroupTool = { path: string; label: string };
 
 /**
- * Top-nav group trigger with a click-driven submenu.
+ * Top-nav group trigger with hover AND click submenu.
  *
  * Behavior:
- * - Opens/toggles on click (no hover trigger).
- * - Closes on `mousedown` outside the wrapper, on `Escape`, and after any
- *   menu item is selected.
+ * - Opens on mouseenter on the wrapper, closes on mouseleave (with 150ms delay
+ *   so the user can move the cursor into the menu without it dismissing).
+ * - Click on the trigger button (label or caret) toggles open/closed.
+ * - Closes on Escape and on `mousedown` outside the wrapper.
  */
 export function NavGroupDropdown({
   label,
@@ -27,6 +28,23 @@ export function NavGroupDropdown({
 }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function openNow() {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+    setOpen(true);
+  }
+
+  function scheduleClose() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => {
+      setOpen(false);
+      closeTimer.current = null;
+    }, 150);
+  }
 
   // Close on click outside the wrapper.
   useEffect(() => {
@@ -51,6 +69,13 @@ export function NavGroupDropdown({
     return () => document.removeEventListener("keydown", handleKey);
   }, [open]);
 
+  // Cleanup any pending close timer on unmount.
+  useEffect(() => {
+    return () => {
+      if (closeTimer.current) clearTimeout(closeTimer.current);
+    };
+  }, []);
+
   return (
     <div
       ref={containerRef}
@@ -59,6 +84,8 @@ export function NavGroupDropdown({
         open && "is-open",
         isActive && "is-active",
       )}
+      onMouseEnter={openNow}
+      onMouseLeave={scheduleClose}
     >
       <button
         type="button"
