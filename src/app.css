@@ -29,13 +29,17 @@ body {
   --ink-faint: #a2a6c6;
   --line: 122 129 186;
   --shadow: 90 98 164;
-  --card-fill: rgb(255 255 255 / var(--card-bg-opacity, 0.6));
+  --card-fill: rgb(255 255 255 / var(--card-bg-opacity, 0.62));
   --card-fill-hover: rgb(
-    255 255 255 / calc(var(--card-bg-opacity, 0.6) + 0.16)
+    255 255 255 / calc(var(--card-bg-opacity, 0.62) + 0.16)
   );
+  --card-fill-solid: rgb(255 255 255 / 0.96);
+  --card-fill-solid-hover: rgb(255 255 255 / 1);
   --star: 104 128 226;
   --orb-opacity: 0.5;
   --noise-opacity: 0.045;
+  --danger: #b1372e;
+  --danger-bg: #fff0ed;
 }
 
 :root[data-theme="dark"],
@@ -48,9 +52,13 @@ body {
   --shadow: 3 6 24;
   --card-fill: rgb(17 21 48 / var(--card-bg-opacity, 0.6));
   --card-fill-hover: rgb(32 38 82 / calc(var(--card-bg-opacity, 0.6) + 0.14));
+  --card-fill-solid: rgb(20 24 52 / 0.94);
+  --card-fill-solid-hover: rgb(28 34 70 / 0.96);
   --star: 186 201 255;
   --orb-opacity: 0.36;
   --noise-opacity: 0.06;
+  --danger: #fbb4ad;
+  --danger-bg: rgb(177 55 46 / 0.18);
 }
 
 /* shadcn bridge: ecosystem tokens → shadcn variable names.
@@ -63,7 +71,7 @@ body {
   --foreground: var(--ink);
   --card: var(--card-fill);
   --card-foreground: var(--ink);
-  --popover: var(--card-fill);
+  --popover: var(--card-fill-solid);
   --popover-foreground: var(--ink);
   --primary: var(--color-primary, #7f9df2);
   --primary-foreground: white;
@@ -76,14 +84,13 @@ body {
   --border: rgb(var(--line) / 0.35);
   --input: rgb(var(--line) / 0.5);
   --ring: var(--color-primary);
-  --destructive: #d96b5f;
+  --destructive: var(--danger);
   /* one-ip semantic colors (preserved) */
   --success: #1b8a2d;
   --success-soft: #d1fae5;
   --success-text: #065f46;
   --good: #6fcf7c;
   --warning: #f0c040;
-  --danger: #cf222e;
   --info-soft: #dbeafe;
   --info-text: #1d4ed8;
   --subtle: #8b949e;
@@ -96,7 +103,7 @@ body {
   --foreground: var(--ink);
   --card: var(--card-fill);
   --card-foreground: var(--ink);
-  --popover: var(--card-fill);
+  --popover: var(--card-fill-solid);
   --popover-foreground: var(--ink);
   --primary: var(--color-primary, #9ab2ff);
   --primary-foreground: #0e1230;
@@ -109,7 +116,7 @@ body {
   --border: rgb(var(--line) / 0.3);
   --input: rgb(var(--line) / 0.4);
   --ring: var(--color-primary);
-  --destructive: #f08074;
+  --destructive: var(--danger);
   --success-soft: #123e31;
   --success-text: #a7f3d0;
   --info-soft: #162d4e;
