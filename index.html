@@ -69,7 +69,13 @@
             try { localStorage.setItem(NEW_KEY, choice); } catch (e) {}
             apply();
             // Notify React so theme-aware components re-render.
-            window.dispatchEvent(new StorageEvent("storage", { key: NEW_KEY }));
+            window.dispatchEvent(
+              new StorageEvent("storage", {
+                key: NEW_KEY,
+                newValue: choice,
+                storageArea: localStorage,
+              }),
+            );
           },
         };
         // Preserve legacy data-color / data-radius / data-layout / data-font-size attrs.
