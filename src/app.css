@@ -4712,3 +4712,41 @@ body {
   opacity: var(--noise-opacity);
   background-size: 160px 160px;
 }
+
+/* ====================================================================
+ * Top-left back link (mirror of .theme-toggle)
+ * ==================================================================== */
+.back-link {
+  position: fixed;
+  top: max(18px, env(safe-area-inset-top));
+  left: max(18px, env(safe-area-inset-left));
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--line) / var(--card-border-opacity, 0.4));
+  background: var(--card-fill);
+  color: var(--ink-soft);
+  backdrop-filter: blur(var(--card-blur, 18px));
+  -webkit-backdrop-filter: blur(var(--card-blur, 18px));
+  text-decoration: none;
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.back-link:hover {
+  transform: translateY(-2px);
+  color: var(--color-primary);
+  border-color: rgb(var(--line) / 0.7);
+}
+
+.back-link svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+}

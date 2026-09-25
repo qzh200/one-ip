@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useRef } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { BackLink } from "@/components/back-link";
 import { BuildInfo } from "@/components/build-info";
 import { HomePageSkeleton } from "@/components/home-page-skeleton";
 import { LanguageSelect } from "@/components/language-select";
@@ -101,6 +102,7 @@ export function AppLayout() {
   return (
     <>
       <BgScene />
+      <BackLink />
       <div className="app-container">
         <header className="mobile-site-header">
           <Link
